@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  db:
+    container_name: smt-project-mysql
+    image: mysql:5.7
+    platform: linux/x86_64
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smt_project
+    volumes:
+      - mysql:/mysql.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - smt-project-network
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smt-project-php
+    volumes:
+      - ./php:/var/www/html
+    depends_on:
+      - db
+    ports:
+      - "8125:80"
+    networks:
+      - smt-project-network
+
+volumes:
+  mysql:
+
+networks:
+  smt-project-network:
